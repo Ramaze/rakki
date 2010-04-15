@@ -1,6 +1,3 @@
-require 'logger'
-require 'vendor/git_extension'
-
 module Rakki
   class Page
     EXT = '.org'
@@ -39,7 +36,8 @@ module Rakki
     end
 
     def self.uv_diff(string, style)
-      Uv.parse(string, 'xhtml', 'diff', false, style, false)
+      # Uv.parse(string, 'xhtml', 'diff', false, style, false)
+      string
     end
 
     def self.show(sha, file)
@@ -47,7 +45,7 @@ module Rakki
     end
 
     def self.init(repo = self.repo, language = Rakki.options.default_language)
-      lang_home = File.join(default_language, "Home#{EXT}")
+      lang_home = File.join(language, "Home#{EXT}")
       FileUtils.mkdir_p(repo(language))
 
       Dir.chdir(repo){
@@ -109,10 +107,11 @@ module Rakki
     end
 
     def revisions
-      object = "-- #{path}"
+      # object = "-- #{path}"
+      object = path.to_s
       self.class.log_cache[object] = G.lib.log_commits(:object => object)
     rescue Git::GitExecuteError => ex
-      Ramaze::Log.error(ex)
+      # Ramaze::Log.error(ex)
       []
     end
 
@@ -166,7 +165,7 @@ module Rakki
     end
 
     def to_toc
-      org.to_toc
+      org.to_toc.join
     end
 
     def org

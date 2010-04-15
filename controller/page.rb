@@ -63,7 +63,7 @@ module Rakki
     def diff(sha, *file)
       @sha, @name = sha, file.join('/')
       style = session[:uv_style] = request[:uv_style] || session[:uv_style] || 'dawn'
-      @styles = Uv.themes
+      @styles = []# Uv.themes
       @text = Page[@name, lang].diff(sha, style)
     end
 
@@ -119,7 +119,7 @@ module Rakki
         end
       end
 
-      final_nested_list(final).flatten.join("\n")
+      final_nested_list(final).flatten
     end
 
     def final_nested_list(list, head = nil)

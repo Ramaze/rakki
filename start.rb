@@ -3,23 +3,28 @@ dir = File.expand_path(File.dirname(__FILE__))
 $LOAD_PATH.unshift(dir)
 Dir["#{dir}/vendor/*/lib"].each{|lib| $LOAD_PATH.unshift(lib) }
 
-require 'ramaze'
-require 'vendor/feed_convert'
-
-Ramaze.setup do
-  gem 'manveru-org', :lib => 'org', :source => github
-  gem 'ultraviolet', :lib => 'uv'
-  gem 'builder'
-end
-
-Uv.copy_files('xhtml', File.join(File.dirname(__FILE__), 'public'))
+# sorry, but we need this on debian :(
+# gem 'git', '1.1.1'
 
 require 'yaml/store'
+require 'logger'
+require 'ramaze'
+require 'org'
+require 'git'
+require 'nokogiri'
+# require 'ultraviolet'
+require 'builder'
+
+# Uv.copy_files('xhtml', File.join(File.dirname(__FILE__), 'public'))
+
+require_relative 'vendor/feed_convert'
+require_relative 'vendor/git_extension'
+require_relative 'vendor/rack/localize'
+
 require 'ramaze/helper/localize'
 require 'ramaze/helper/user'
+require_relative 'env'
+require_relative 'model/init'
+require_relative 'controller/init'
 
-require 'env'
-require 'model/init'
-require 'controller/init'
-
-Ramaze.start(:adapter => :mongrel, :mode => :live) if __FILE__ == $0
+Ramaze.start(:adapter => :webrick, :mode => :live) if __FILE__ == $0

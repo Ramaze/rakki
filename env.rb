@@ -1,3 +1,5 @@
+# Encoding: UTF-8
+
 module Rakki
   include Ramaze::Optioned
 
@@ -108,21 +110,21 @@ module Org
     def build_feed(link, desc)
       feed = FeedConvert.parse(open(link))
 
-      b = Builder::XmlMarkup.new
+      xml = Nokogiri::XML::Builder.new do |b|
+        b.div(:class => 'feed') do
+          b.h2{ b.a(feed.title, :href => feed.link) } if desc
 
-      b.div(:class => 'feed') do
-        b.h2{ b.a(feed.title, :href => feed.link) } if desc
-
-        b.ul do
-          feed.items.map do |item|
-            b.li do
-              b.a(item.title, :href => item.link)
+          b.ul do
+            feed.items.map do |item|
+              b.li do
+                b.a(item.title, :href => item.link)
+              end
             end
           end
         end
       end
 
-      b.target!
+      xml.to_s
     end
 
     # TODO: format for search or name of article.
