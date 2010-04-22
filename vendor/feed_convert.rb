@@ -1,11 +1,11 @@
-require 'hpricot'
 require 'open-uri'
+require 'nokogiri'
 
 class FeedConvert
   def self.parse(doc)
-    h = Hpricot(doc, :xml => true)
+    h = Nokogiri::XML(doc)
 
-    if feed = h.at('/feed[@xmlns="http://www.w3.org/2005/Atom"]')
+    if feed = h.at('/atom:feed', 'atom' => 'http://www.w3.org/2005/Atom')
       AtomFeed.new.parse(feed)
     elsif rss = h.at('/rss[@version=2.0]')
       RSS2Feed.new.parse(rss)
@@ -14,7 +14,7 @@ class FeedConvert
     end
   end
 
-  class Item < Struct.new(:id, :link, :title, :author, :content)
+  class Item < Struct.new(:id, :link, :title, :author, :content, :time)
   end unless defined?(FeedConvert::Item)
 
   class AtomFeed
@@ -44,6 +44,7 @@ class FeedConvert
         item.title   = e.at(:title).inner_text
         item.author  = e.at('author/name').inner_text
         item.content = e.at(:content).inner_text
+        item.time    = Time.parse(e.at(:updated).inner_text)
         item
       end
     end
@@ -75,8 +76,10 @@ class FeedConvert
         item.id      = i.at(:guid).inner_text
         item.link    = i.at(:link).inner_text
         item.title   = i.at(:title).inner_text
-        item.author  = i.at(:author).inner_text.strip.gsub(/\s+/, ' ')
+        author_node  = i.at(:author)
+        item.author  = author_node ? author_node.inner_text.strip.gsub(/\s+/, ' ') : ''
         item.content = Time.parse(i.at(:pubDate).inner_text)
+        item.time    = Time.parse(i.at(:pubDate).inner_text)
         item
       end
     end

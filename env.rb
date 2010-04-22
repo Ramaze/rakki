@@ -108,7 +108,7 @@ module Org
     end
 
     def build_feed(link, desc)
-      feed = FeedConvert.parse(open(link))
+      feed = open(link){|io| FeedConvert.parse(io) }
 
       xml = Nokogiri::XML::Builder.new do |b|
         b.div(:class => 'feed') do
@@ -124,7 +124,7 @@ module Org
         end
       end
 
-      xml.to_s
+      xml.to_xml
     end
 
     # TODO: format for search or name of article.

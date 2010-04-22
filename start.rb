@@ -1,20 +1,12 @@
-dir = File.expand_path(File.dirname(__FILE__))
-
-$LOAD_PATH.unshift(dir)
-Dir["#{dir}/vendor/*/lib"].each{|lib| $LOAD_PATH.unshift(lib) }
-
-# sorry, but we need this on debian :(
-# gem 'git', '1.1.1'
-
 require 'yaml/store'
+require 'coderay'
 require 'logger'
 require 'ramaze'
 require 'org'
 require 'git'
 require 'nokogiri'
-# require 'ultraviolet'
-require 'builder'
 
+# require 'ultraviolet'
 # Uv.copy_files('xhtml', File.join(File.dirname(__FILE__), 'public'))
 
 require_relative 'vendor/feed_convert'

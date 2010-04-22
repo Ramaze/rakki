@@ -14,5 +14,5 @@ module Rakki
   end
 end
 
-require 'controller/auth'
-require 'controller/page'
+require_relative 'auth'
+require_relative 'page'
